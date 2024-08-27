@@ -1,9 +1,13 @@
+/// <reference types="react" />
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Typography, Paper, Select, MenuItem, FormControl, InputLabel, Box, Slider } from '@mui/material';
-import { Stage, Layer, Image as KonvaImage, Transformer } from 'react-konva';
-import Konva from 'konva';
 import { SelectChangeEvent } from '@mui/material/Select';
+import Konva from 'konva';
+import { Stage, Layer, Image as KonvaImage, Transformer } from 'react-konva';
 import { logoFiles, Logo } from '../utils/logoFiles';
+
+declare const process: { env: { PUBLIC_URL: string } };
 
 const MAX_DISPLAY_SIZE = 1000; // גודל מקסימלי לתצוגה
 
@@ -160,7 +164,7 @@ function LogoEmbedder() {
     return (
       <>
         <KonvaImage
-          id="logo" // הוספת מזהה ייחודי
+          id="logo"
           image={logoImage}
           x={logoPosition.x}
           y={logoPosition.y}
@@ -170,10 +174,10 @@ function LogoEmbedder() {
           offsetY={logoImage.height / 2}
           draggable
           ref={logoRef}
-          onDragEnd={(e) => {
+          onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
             setLogoPosition({ x: e.target.x(), y: e.target.y() });
           }}
-          onTransformEnd={(e) => {
+          onTransformEnd={(e: Konva.KonvaEventObject<Event>) => {
             const node = logoRef.current;
             if (node) {
               const scaleX = node.scaleX();
@@ -234,7 +238,7 @@ function LogoEmbedder() {
             width={stageSize.width} 
             height={stageSize.height} 
             ref={stageRef}
-            onMouseDown={(e) => {
+            onMouseDown={(e: Konva.KonvaEventObject<MouseEvent>) => {
               // בדיקה אם הקליק היה מחוץ ללוגו
               const clickedOnEmpty = e.target === e.target.getStage();
               if (clickedOnEmpty) {
@@ -261,7 +265,7 @@ function LogoEmbedder() {
             <Typography gutterBottom>איכות הייצוא</Typography>
             <Slider
               value={exportQuality}
-              onChange={(_, newValue) => setExportQuality(newValue as number)}
+              onChange={(event: Event, newValue: number | number[]) => setExportQuality(newValue as number)}
               min={0.1}
               max={1}
               step={0.1}
