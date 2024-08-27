@@ -1,13 +1,14 @@
 import React, { useState, useCallback } from 'react';
-import { Button, Box, Typography, Paper, Slider } from '@mui/material';
+import { Button, Box, Typography, Paper } from '@mui/material';
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from '../utils/imageUtils';
 
-function ImageProcessor() {
+function ImageResizer() {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [processedImageUrl, setProcessedImageUrl] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -21,24 +22,23 @@ function ImageProcessor() {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  const showCroppedImage = useCallback(async () => {
-    try {
-      if (selectedFile && croppedAreaPixels) {
-        const croppedImage = await getCroppedImg(
-          selectedFile,
-          croppedAreaPixels
-        );
-        console.log('donee', { croppedImage });
+  const resizeImage = async () => {
+    if (selectedFile && croppedAreaPixels) {
+      try {
+        const croppedImage = await getCroppedImg(selectedFile, croppedAreaPixels);
+        // Here you would typically send the cropped image to a server for resizing
+        // For now, we'll just set the cropped image as the result
+        setProcessedImageUrl(croppedImage);
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
     }
-  }, [croppedAreaPixels, selectedFile]);
+  };
 
   return (
     <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
       <Typography variant="h5" gutterBottom>
-        עיבוד תמונה
+        הקטנת תמונה ל-1 מגה
       </Typography>
       <input
         accept="image/*"
@@ -65,27 +65,22 @@ function ImageProcessor() {
           />
         </Box>
       )}
-      <Box sx={{ mt: 2 }}>
-        <Typography>זום</Typography>
-        <Slider
-          value={zoom}
-          min={1}
-          max={3}
-          step={0.1}
-          aria-labelledby="Zoom"
-          onChange={(e, zoom) => setZoom(zoom as number)}
-        />
-      </Box>
       <Button
         variant="contained"
-        onClick={showCroppedImage}
+        onClick={resizeImage}
         disabled={!selectedFile}
         sx={{ mt: 2 }}
       >
-        עבד תמונה
+        הקטן תמונה
       </Button>
+      {processedImageUrl && (
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="subtitle1">תמונה מעובדת:</Typography>
+          <img src={processedImageUrl} alt="Processed" style={{ maxWidth: '100%' }} />
+        </Box>
+      )}
     </Paper>
   );
 }
 
-export default ImageProcessor;
+export default ImageResizer;

@@ -4,7 +4,8 @@ import { Container, CssBaseline, ThemeProvider, createTheme } from '@mui/materia
 import Header from './components/Header';
 import Home from './pages/Home';
 import PdfEmbedder from './pages/PdfEmbedder';
-import ImageProcessor from './pages/ImageProcessor';
+import LogoEmbedder from './pages/LogoEmbedder';
+import ImageResizer from './pages/ImageResizer';
 import FileConverter from './pages/FileConverter';
 
 const theme = createTheme({
@@ -24,7 +25,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/pdf-embedder" element={<PdfEmbedder />} />
-            <Route path="/image-processor" element={<ImageProcessor />} />
+            <Route path="/logo-embedder" element={<LogoEmbedder />} />
+            <Route path="/image-resizer" element={<ImageResizer />} />
             <Route path="/file-converter" element={<FileConverter />} />
           </Routes>
         </Container>

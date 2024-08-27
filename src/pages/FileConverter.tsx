@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Button, Box, Typography, Paper, CircularProgress, Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from '@mui/material';
-import Jimp from 'jimp';
+import Cropper from 'react-easy-crop';
+import { getCroppedImg } from '../utils/imageUtils';
 
 function FileConverter() {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [targetFormat, setTargetFormat] = useState('');
   const [convertedFileUrl, setConvertedFileUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setSelectedFile(event.target.files[0]);
+    if (event.target.files && event.target.files.length > 0) {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => setSelectedFile(reader.result as string));
+      reader.readAsDataURL(event.target.files[0]);
     }
   };
 
@@ -18,31 +24,18 @@ function FileConverter() {
     setTargetFormat(event.target.value);
   };
 
+  const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
   const convertFile = async () => {
     if (!selectedFile || !targetFormat) return;
 
     setIsLoading(true);
 
     try {
-      const buffer = await selectedFile.arrayBuffer();
-      const image = await Jimp.read(Buffer.from(buffer));
-
-      let mimeType;
-      switch (targetFormat) {
-        case 'jpg':
-          mimeType = Jimp.MIME_JPEG;
-          break;
-        case 'png':
-          mimeType = Jimp.MIME_PNG;
-          break;
-        default:
-          throw new Error('Unsupported format');
-      }
-
-      const convertedBuffer = await image.getBufferAsync(mimeType);
-      const blob = new Blob([convertedBuffer], { type: mimeType });
-      const url = URL.createObjectURL(blob);
-      setConvertedFileUrl(url);
+      const croppedImage = await getCroppedImg(selectedFile, croppedAreaPixels);
+      setConvertedFileUrl(croppedImage);
     } catch (error) {
       console.error('Error converting file:', error);
     } finally {
@@ -67,9 +60,17 @@ function FileConverter() {
         </Button>
       </label>
       {selectedFile && (
-        <Typography variant="body1" sx={{ mt: 2 }}>
-          נבחר: {selectedFile.name}
-        </Typography>
+        <Box sx={{ position: 'relative', width: '100%', height: 400, mt: 2 }}>
+          <Cropper
+            image={selectedFile}
+            crop={crop}
+            zoom={zoom}
+            aspect={16 / 9}
+            onCropChange={setCrop}
+            onCropComplete={onCropComplete}
+            onZoomChange={setZoom}
+          />
+        </Box>
       )}
       <FormControl fullWidth sx={{ mt: 2 }}>
         <InputLabel id="target-format-label">פורמט יעד</InputLabel>
@@ -79,8 +80,6 @@ function FileConverter() {
           label="פורמט יעד"
           onChange={handleFormatChange}
         >
-          <MenuItem value="mp3">MP3</MenuItem>
-          <MenuItem value="wav">WAV</MenuItem>
           <MenuItem value="jpg">JPG</MenuItem>
           <MenuItem value="png">PNG</MenuItem>
         </Select>
@@ -97,7 +96,7 @@ function FileConverter() {
       {convertedFileUrl && (
         <Box sx={{ mt: 2 }}>
           <Typography variant="subtitle1">קובץ מומר:</Typography>
-          <Button variant="contained" href={convertedFileUrl} download>
+          <Button variant="contained" href={convertedFileUrl} download={`converted.${targetFormat}`}>
             הורד קובץ מומר
           </Button>
         </Box>

@@ -16,8 +16,11 @@ function Header() {
           <Button color="inherit" component={RouterLink} to="/pdf-embedder">
             הטמעת PDF
           </Button>
-          <Button color="inherit" component={RouterLink} to="/image-processor">
-            עיבוד תמונה
+          <Button color="inherit" component={RouterLink} to="/logo-embedder">
+            הטמעת לוגו
+          </Button>
+          <Button color="inherit" component={RouterLink} to="/image-resizer">
+            הקטנת תמונה
           </Button>
           <Button color="inherit" component={RouterLink} to="/file-converter">
             המרת קבצים

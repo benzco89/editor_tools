@@ -1,13 +1,15 @@
 import React, { useState, useCallback } from 'react';
-import { Button, Box, Typography, Paper, Slider } from '@mui/material';
+import { Button, Box, Typography, Paper, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from '../utils/imageUtils';
 
-function ImageProcessor() {
+function LogoEmbedder() {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [selectedLogo, setSelectedLogo] = useState<string>('');
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [processedImageUrl, setProcessedImageUrl] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -21,24 +23,23 @@ function ImageProcessor() {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  const showCroppedImage = useCallback(async () => {
-    try {
-      if (selectedFile && croppedAreaPixels) {
-        const croppedImage = await getCroppedImg(
-          selectedFile,
-          croppedAreaPixels
-        );
-        console.log('donee', { croppedImage });
+  const embedLogo = async () => {
+    if (selectedFile && croppedAreaPixels && selectedLogo) {
+      try {
+        const croppedImage = await getCroppedImg(selectedFile, croppedAreaPixels);
+        // Here you would typically send the cropped image and selected logo to a server
+        // for processing. For now, we'll just set the cropped image as the result.
+        setProcessedImageUrl(croppedImage);
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
     }
-  }, [croppedAreaPixels, selectedFile]);
+  };
 
   return (
     <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
       <Typography variant="h5" gutterBottom>
-        עיבוד תמונה
+        הטמעת לוגו
       </Typography>
       <input
         accept="image/*"
@@ -65,27 +66,35 @@ function ImageProcessor() {
           />
         </Box>
       )}
-      <Box sx={{ mt: 2 }}>
-        <Typography>זום</Typography>
-        <Slider
-          value={zoom}
-          min={1}
-          max={3}
-          step={0.1}
-          aria-labelledby="Zoom"
-          onChange={(e, zoom) => setZoom(zoom as number)}
-        />
-      </Box>
+      <FormControl fullWidth sx={{ mt: 2 }}>
+        <InputLabel id="logo-select-label">בחר לוגו</InputLabel>
+        <Select
+          labelId="logo-select-label"
+          value={selectedLogo}
+          label="בחר לוגו"
+          onChange={(e) => setSelectedLogo(e.target.value as string)}
+        >
+          <MenuItem value="logo1.png">לוגו 1</MenuItem>
+          <MenuItem value="logo2.png">לוגו 2</MenuItem>
+          {/* Add more logo options as needed */}
+        </Select>
+      </FormControl>
       <Button
         variant="contained"
-        onClick={showCroppedImage}
-        disabled={!selectedFile}
+        onClick={embedLogo}
+        disabled={!selectedFile || !selectedLogo}
         sx={{ mt: 2 }}
       >
-        עבד תמונה
+        הטמע לוגו
       </Button>
+      {processedImageUrl && (
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="subtitle1">תמונה מעובדת:</Typography>
+          <img src={processedImageUrl} alt="Processed" style={{ maxWidth: '100%' }} />
+        </Box>
+      )}
     </Paper>
   );
 }
 
-export default ImageProcessor;
+export default LogoEmbedder;
