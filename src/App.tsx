@@ -1,37 +1,30 @@
 import React from 'react';
-import { HashRouter as Router, Route, Routes } from 'react-router-dom';
-import { Container, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import Header from './components/Header';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Home from './pages/Home';
-import PdfEmbedder from './pages/PdfEmbedder';
 import LogoEmbedder from './pages/LogoEmbedder';
-import ImageResizer from './pages/ImageResizer';
+import PdfEmbedder from './pages/PdfEmbedder';
 import FileConverter from './pages/FileConverter';
-
-const theme = createTheme({
-  direction: 'rtl',
-  typography: {
-    fontFamily: 'Arial, sans-serif',
-  },
-});
+import ImageCompression from './pages/ImageCompression';
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <Container maxWidth="lg">
-          <Header />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/pdf-embedder" element={<PdfEmbedder />} />
-            <Route path="/logo-embedder" element={<LogoEmbedder />} />
-            <Route path="/image-resizer" element={<ImageResizer />} />
-            <Route path="/file-converter" element={<FileConverter />} />
-          </Routes>
-        </Container>
-      </Router>
-    </ThemeProvider>
+    <Router basename="/editor_tools">
+      <div className="App">
+        <header className="bg-white shadow-md p-4">
+          <Link to="/" className="flex items-center">
+            <img src={`${process.env.PUBLIC_URL}/kan-news-logo.jpg`} alt="כאן חדשות" className="h-10 mr-2" />
+            <span className="text-xl font-bold text-primary">כלי עזר</span>
+          </Link>
+        </header>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/logo-embedder" element={<LogoEmbedder />} />
+          <Route path="/pdf-embedder" element={<PdfEmbedder />} />
+          <Route path="/file-converter" element={<FileConverter />} />
+          <Route path="/image-compression" element={<ImageCompression />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

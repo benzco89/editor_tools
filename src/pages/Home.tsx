@@ -1,57 +1,14 @@
 import React from 'react';
-import { Typography, Grid, Paper, Button } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import ToolSelector from '../components/ToolSelector';
 
-function Home() {
+const Home: React.FC = () => {
   return (
-    <div>
-      <Typography variant="h4" component="h1" gutterBottom>
-        ברוכים הבאים לארגז הכלים לעורכי חדשות דיגיטליות
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={4}>
-          <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
-            <Typography variant="h6" gutterBottom>
-              הטמעת PDF
-            </Typography>
-            <Button component={RouterLink} to="/pdf-embedder" variant="contained">
-              התחל
-            </Button>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
-            <Typography variant="h6" gutterBottom>
-              הטמעת לוגו
-            </Typography>
-            <Button component={RouterLink} to="/logo-embedder" variant="contained">
-              התחל
-            </Button>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
-            <Typography variant="h6" gutterBottom>
-              הקטנת תמונה
-            </Typography>
-            <Button component={RouterLink} to="/image-resizer" variant="contained">
-              התחל
-            </Button>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
-            <Typography variant="h6" gutterBottom>
-              המרת קבצים
-            </Typography>
-            <Button component={RouterLink} to="/file-converter" variant="contained">
-              התחל
-            </Button>
-          </Paper>
-        </Grid>
-      </Grid>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-6 text-primary">כלי עזר - כאן חדשות</h1>
+      <p className="text-xl mb-8">בחרו את הכלי בו תרצו להשתמש:</p>
+      <ToolSelector />
     </div>
   );
-}
+};
 
 export default Home;

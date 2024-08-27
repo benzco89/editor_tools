@@ -1,34 +1,26 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-function Header() {
+const Header: React.FC = () => {
   return (
-    <AppBar position="static">
-      <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          ארגז כלים לעורכי חדשות דיגיטליות
-        </Typography>
-        <Box>
-          <Button color="inherit" component={RouterLink} to="/">
-            בית
-          </Button>
-          <Button color="inherit" component={RouterLink} to="/pdf-embedder">
-            הטמעת PDF
-          </Button>
-          <Button color="inherit" component={RouterLink} to="/logo-embedder">
-            הטמעת לוגו
-          </Button>
-          <Button color="inherit" component={RouterLink} to="/image-resizer">
-            הקטנת תמונה
-          </Button>
-          <Button color="inherit" component={RouterLink} to="/file-converter">
-            המרת קבצים
-          </Button>
-        </Box>
-      </Toolbar>
-    </AppBar>
+    <header className="bg-white shadow-md">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <Link to="/" className="flex items-center">
+          <img src="/kan-news-logo.jpg" alt="כאן חדשות" className="h-10 mr-2" />
+          <span className="text-xl font-bold text-primary">כלי עזר</span>
+        </Link>
+        <nav>
+          <ul className="flex space-x-4">
+            <li><Link to="/" className="text-gray-600 hover:text-primary">בית</Link></li>
+            <li><Link to="/image-compression" className="text-gray-600 hover:text-primary">דחיסת תמונות</Link></li>
+            <li><Link to="/logo-embedder" className="text-gray-600 hover:text-primary">הטמעת לוגו</Link></li>
+            <li><Link to="/pdf-embedder" className="text-gray-600 hover:text-primary">הטמעת PDF</Link></li>
+            <li><Link to="/file-converter" className="text-gray-600 hover:text-primary">המרת קבצים</Link></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
   );
-}
+};
 
 export default Header;

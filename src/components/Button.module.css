@@ -1,0 +1,38 @@
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.secondary {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.accent {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.3);
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+/* Add more button styles as needed */

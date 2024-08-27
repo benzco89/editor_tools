@@ -2,25 +2,29 @@
   "name": "editor-tools",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://benzco89.github.io/editor_tools",
+  "homepage": "https://your-username.github.io/editor_tools",
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/material": "^5.11.14",
     "@types/node": "^16.18.18",
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
+    "@types/react": "^18.3.4",
+    "@types/react-dom": "^18.3.0",
+    "browser-image-compression": "^2.0.2",
+    "konva": "^8.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.9.0",
+    "react-easy-crop": "^4.7.4",
+    "react-konva": "^18.2.10",
+    "react-router-dom": "^6.10.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5",
-    "react-easy-crop": "^4.7.4"
+    "use-image": "^1.1.1"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
@@ -44,7 +48,11 @@
     ]
   },
   "devDependencies": {
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
     "gh-pages": "^5.0.0",
-    "react-app-rewired": "^2.2.1"
+    "react-app-rewired": "^2.2.1",
+    "ts-loader": "^9.4.2",
+    "typescript": "^4.5.0"
   }
 }

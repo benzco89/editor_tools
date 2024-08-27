@@ -9,5 +9,8 @@ module.exports = function override(config, env) {
     os: false,
   };
   
+  // Remove the ts-loader rule
+  config.module.rules = config.module.rules.filter(rule => rule.loader !== 'ts-loader');
+  
   return config;
 }
