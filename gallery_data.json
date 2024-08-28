@@ -16,14 +16,6 @@
     "link": "https://www.kan.org.il/program/?catId=1039"
   },
   {
-    "id": "3",
-    "name": "יערה שפירא",
-    "title": "הבוקר הזה",
-    "program": "הבוקר הזה",
-    "url": "https://kan.org.il/media/vnvhaitd/imgid-85134_z.jpeg",
-    "link": "https://www.kan.org.il/program/?catId=1039"
-  },
-  {
     "id": "1724866145355",
     "name": "שאול אמסטרדמסקי",
     "program": "הבוקר הזה",
@@ -34,6 +26,14 @@
     "name": "מאיה ראכלין",
     "program": "הבוקר הזה",
     "url": "https://www.kan.org.il/media/tfjh5wqs/whatsapp-image-2024-08-20-at-063600-1.jpeg"
+  },
+  {
+    "id": "3",
+    "name": "יערה שפירא",
+    "title": "הבוקר הזה",
+    "program": "הבוקר הזה",
+    "url": "https://kan.org.il/media/vnvhaitd/imgid-85134_z.jpeg",
+    "link": "https://www.kan.org.il/program/?catId=1039"
   },
   {
     "id": "4",
