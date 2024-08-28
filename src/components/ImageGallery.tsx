@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Grid, Card, CardMedia, CardContent, Typography, Snackbar, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { Octokit } from "@octokit/rest";
 
 interface Image {
   id: string;
@@ -28,23 +27,23 @@ const ImageGallery: React.FC = () => {
   const fetchImages = async () => {
     console.log('Attempting to fetch images...');
     console.log('REACT_APP_GITHUB_TOKEN exists:', process.env.REACT_APP_GITHUB_TOKEN ? 'Yes' : 'No');
+    console.log('Token value (first 5 chars):', process.env.REACT_APP_GITHUB_TOKEN?.substring(0, 5));
     
     try {
-      const octokit = new Octokit({ 
-        auth: process.env.REACT_APP_GITHUB_TOKEN,
-        userAgent: 'editor_tools v1.0.0'
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+        headers: {
+          Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`
+        }
       });
-
-      const response = await octokit.repos.getContent({
-        owner,
-        repo,
-        path,
-      });
-
-      console.log('API Response:', response);
-
-      if ('content' in response.data) {
-        const decodedContent = atob(response.data.content);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.content) {
+        const decodedContent = atob(data.content);
         const parsedImages: Image[] = JSON.parse(decodedContent);
         setImages(parsedImages);
         setFilteredImages(parsedImages);
@@ -52,7 +51,7 @@ const ImageGallery: React.FC = () => {
         const uniquePrograms = Array.from(new Set(parsedImages.map(img => img.program)));
         setPrograms(uniquePrograms);
       } else {
-        console.error('Unexpected response format:', response.data);
+        console.error('Unexpected response format:', data);
         setSnackbarMessage('תגובה לא צפויה מהשרת');
         setSnackbarOpen(true);
       }
