@@ -71,51 +71,16 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Router basename="/editor_tools">
-            <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-              <AppBar position="static">
-                <Toolbar>
-                  <IconButton
-                    color="inherit"
-                    aria-label="open drawer"
-                    edge="start"
-                    onClick={handleDrawerToggle}
-                    sx={{ mr: 2, display: { sm: 'none' } }}
-                  >
-                    <MenuIcon />
-                  </IconButton>
-                  <Link to="/" style={{ display: 'flex', alignItems: 'center', color: 'inherit', textDecoration: 'none' }}>
-                    <img src="./kan-news-logo.jpg" alt="כאן חדשות" style={{ height: '40px', marginLeft: '10px' }} />
-                    <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>כלי עזר</span>
-                  </Link>
-                </Toolbar>
-              </AppBar>
-              <nav aria-label="תפריט ראשי">
-                <Drawer
-                  variant="temporary"
-                  open={mobileOpen}
-                  onClose={handleDrawerToggle}
-                  ModalProps={{
-                    keepMounted: true, // Better open performance on mobile.
-                  }}
-                  sx={{
-                    display: { xs: 'block', sm: 'none' },
-                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
-                  }}
-                >
-                  {drawer}
-                </Drawer>
-              </nav>
-              <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/logo-embedder" element={<LogoEmbedder />} />
-                  <Route path="/pdf-embedder" element={<PdfEmbedder />} />
-                  <Route path="/file-converter" element={<FileConverter />} />
-                  <Route path="/image-compression" element={<ImageCompression />} />
-                  <Route path="/image-gallery" element={<ImageGallery />} />
-                  <Route path="/gallery-manager" element={<GalleryManager />} />
-                </Routes>
-              </Box>
+            <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX: 'hidden' }}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/logo-embedder" element={<LogoEmbedder />} />
+                <Route path="/pdf-embedder" element={<PdfEmbedder />} />
+                <Route path="/file-converter" element={<FileConverter />} />
+                <Route path="/image-compression" element={<ImageCompression />} />
+                <Route path="/image-gallery" element={<ImageGallery />} />
+                <Route path="/gallery-manager" element={<GalleryManager />} />
+              </Routes>
             </Box>
           </Router>
         </ThemeProvider>
