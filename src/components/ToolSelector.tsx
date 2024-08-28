@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { Grid, Card, CardContent, Typography, Box } from '@mui/material';
 
 const tools = [
   { name: 'דחיסת תמונה', path: '/image-compression', icon: '🖼️' },
@@ -11,21 +12,21 @@ const tools = [
 ];
 
 const ToolSelector: React.FC = () => {
-  useEffect(() => {
-    console.log('ToolSelector component mounted');
-  }, []);
-
-  console.log('ToolSelector component rendering');
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <Grid container spacing={3}>
       {tools.map((tool) => (
-        <Link key={tool.path} to={tool.path} className="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 p-6 flex flex-col items-center">
-          <span className="text-4xl mb-4">{tool.icon}</span>
-          <span className="text-xl font-semibold text-primary">{tool.name}</span>
-        </Link>
+        <Grid item xs={12} sm={6} md={4} key={tool.path}>
+          <Card component={Link} to={tool.path} sx={{ textDecoration: 'none', height: '100%' }}>
+            <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+              <Box sx={{ fontSize: '3rem', mb: 2 }}>{tool.icon}</Box>
+              <Typography variant="h6" align="center" color="text.primary">
+                {tool.name}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
       ))}
-    </div>
+    </Grid>
   );
 };
 

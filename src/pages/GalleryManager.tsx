@@ -5,15 +5,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { Octokit } from "@octokit/rest";
-import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided } from '@hello-pangea/dnd';
 
 interface Image {
   id: string;
   name: string;
-  title: string;
   program: string;
   url: string;
-  link: string;
 }
 
 const octokit = new Octokit({ auth: process.env.REACT_APP_GITHUB_TOKEN });
@@ -24,14 +22,21 @@ const path = 'gallery_data.json';
 const GalleryManager: React.FC = () => {
   const [images, setImages] = useState<Image[]>([]);
   const [newName, setNewName] = useState('');
-  const [newTitle, setNewTitle] = useState('');
   const [newProgram, setNewProgram] = useState('');
   const [newUrl, setNewUrl] = useState('');
-  const [newLink, setNewLink] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editingImage, setEditingImage] = useState<Image | null>(null);
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const animation = requestAnimationFrame(() => setEnabled(true));
+    return () => {
+      cancelAnimationFrame(animation);
+      setEnabled(false);
+    };
+  }, []);
 
   useEffect(() => {
     console.log('GalleryManager: Component mounted, fetching images...');
@@ -108,17 +113,13 @@ const GalleryManager: React.FC = () => {
     const newImage = { 
       id: Date.now().toString(), 
       name: newName,
-      title: newTitle, 
       program: newProgram,
-      url: newUrl,
-      link: newLink
+      url: newUrl
     };
     setImages([...images, newImage]);
     setNewName('');
-    setNewTitle('');
     setNewProgram('');
     setNewUrl('');
-    setNewLink('');
   };
 
   const handleDeleteImage = (id: string) => {
@@ -128,10 +129,8 @@ const GalleryManager: React.FC = () => {
   const handleEditImage = (image: Image) => {
     setEditingImage(image);
     setNewName(image.name);
-    setNewTitle(image.title);
     setNewProgram(image.program);
     setNewUrl(image.url);
-    setNewLink(image.link);
     setEditDialogOpen(true);
   };
 
@@ -139,17 +138,15 @@ const GalleryManager: React.FC = () => {
     if (editingImage) {
       const updatedImages = images.map(image =>
         image.id === editingImage.id
-          ? { ...image, name: newName, title: newTitle, program: newProgram, url: newUrl, link: newLink }
+          ? { ...image, name: newName, program: newProgram, url: newUrl }
           : image
       );
       setImages(updatedImages);
       setEditDialogOpen(false);
       setEditingImage(null);
       setNewName('');
-      setNewTitle('');
       setNewProgram('');
       setNewUrl('');
-      setNewLink('');
     }
   };
 
@@ -174,6 +171,10 @@ const GalleryManager: React.FC = () => {
 
   console.log('GalleryManager: Rendering with images:', images);
 
+  if (!enabled) {
+    return null;
+  }
+
   return (
     <Box sx={{ p: 3, direction: 'rtl', textAlign: 'right' }}>
       <Typography variant="h4" gutterBottom align="right">ניהול גלריית תמונות</Typography>
@@ -182,15 +183,6 @@ const GalleryManager: React.FC = () => {
           label="שם"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
-          fullWidth
-          sx={{ mb: 2 }}
-          InputProps={{ style: { textAlign: 'right' } }}
-          InputLabelProps={{ style: { right: 14, left: 'auto' } }}
-        />
-        <TextField
-          label="כותרת"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
           fullWidth
           sx={{ mb: 2 }}
           InputProps={{ style: { textAlign: 'right' } }}
@@ -209,15 +201,6 @@ const GalleryManager: React.FC = () => {
           label="קישור לתמונה"
           value={newUrl}
           onChange={(e) => setNewUrl(e.target.value)}
-          fullWidth
-          sx={{ mb: 2 }}
-          InputProps={{ style: { textAlign: 'right' } }}
-          InputLabelProps={{ style: { right: 14, left: 'auto' } }}
-        />
-        <TextField
-          label="קישור"
-          value={newLink}
-          onChange={(e) => setNewLink(e.target.value)}
           fullWidth
           sx={{ mb: 2 }}
           InputProps={{ style: { textAlign: 'right' } }}
@@ -247,7 +230,7 @@ const GalleryManager: React.FC = () => {
                       <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
                         <DragIndicatorIcon sx={{ ml: 2 }} />
                         <ListItemText 
-                          primary={`${image.name} - ${image.title}`} 
+                          primary={`${image.name} - ${image.program}`} 
                           secondary={image.url} 
                           primaryTypographyProps={{ style: { textAlign: 'right' } }}
                           secondaryTypographyProps={{ style: { direction: 'ltr', textAlign: 'right' } }}
@@ -300,15 +283,6 @@ const GalleryManager: React.FC = () => {
             InputLabelProps={{ style: { right: 14, left: 'auto' } }}
           />
           <TextField
-            label="כותרת"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            fullWidth
-            sx={{ mb: 2 }}
-            InputProps={{ style: { textAlign: 'right' } }}
-            InputLabelProps={{ style: { right: 14, left: 'auto' } }}
-          />
-          <TextField
             label="תוכנית"
             value={newProgram}
             onChange={(e) => setNewProgram(e.target.value)}
@@ -321,15 +295,6 @@ const GalleryManager: React.FC = () => {
             label="קישור לתמונה"
             value={newUrl}
             onChange={(e) => setNewUrl(e.target.value)}
-            fullWidth
-            sx={{ mb: 2 }}
-            InputProps={{ style: { textAlign: 'right' } }}
-            InputLabelProps={{ style: { right: 14, left: 'auto' } }}
-          />
-          <TextField
-            label="קישור"
-            value={newLink}
-            onChange={(e) => setNewLink(e.target.value)}
             fullWidth
             sx={{ mb: 2 }}
             InputProps={{ style: { textAlign: 'right' } }}

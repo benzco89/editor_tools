@@ -1,7 +1,7 @@
 /// <reference types="react" />
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, Typography, Paper, Select, MenuItem, FormControl, InputLabel, Box, Slider } from '@mui/material';
+import { Button, Typography, Paper, Select, MenuItem, FormControl, InputLabel, Box, Slider, useMediaQuery } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Konva from 'konva';
 import { Stage, Layer, Image as KonvaImage, Transformer } from 'react-konva';
@@ -25,18 +25,36 @@ function LogoEmbedder() {
   const logoRef = useRef<Konva.Image>(null);
   const trRef = useRef<Konva.Transformer>(null);
 
-  // Add new state for controlling responsive layout
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useMediaQuery('(max-width:600px)');
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Add useEffect to check screen size
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+    const updateStageSize = () => {
+      if (containerRef.current && selectedFile) {
+        const containerWidth = containerRef.current.offsetWidth;
+        const containerHeight = window.innerHeight * 0.5; // שימוש ב-50% מגובה המסך
+
+        const imageAspectRatio = selectedFile.width / selectedFile.height;
+        let newWidth, newHeight;
+
+        if (containerWidth / containerHeight > imageAspectRatio) {
+          // התאמה לגובה
+          newHeight = containerHeight;
+          newWidth = newHeight * imageAspectRatio;
+        } else {
+          // התאמה לרוחב
+          newWidth = containerWidth;
+          newHeight = newWidth / imageAspectRatio;
+        }
+
+        setStageSize({ width: newWidth, height: newHeight });
+      }
     };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+
+    updateStageSize();
+    window.addEventListener('resize', updateStageSize);
+    return () => window.removeEventListener('resize', updateStageSize);
+  }, [selectedFile]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -213,7 +231,6 @@ function LogoEmbedder() {
     );
   };
 
-  // Modify the return statement to improve mobile layout
   return (
     <Paper elevation={3} sx={{ p: 2, mt: 2 }}>
       <Typography variant="h5" gutterBottom>
@@ -275,21 +292,24 @@ function LogoEmbedder() {
           )}
         </Box>
         {selectedFile && selectedLogo && (
-          <Box sx={{ width: '100%', overflow: 'auto' }}>
+          <Box 
+            ref={containerRef} 
+            sx={{ 
+              width: '100%', 
+              height: '50vh', // הגדרת גובה קבוע
+              overflow: 'hidden',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
             <Stage 
               width={stageSize.width} 
               height={stageSize.height} 
               ref={stageRef}
-              onMouseDown={(e: Konva.KonvaEventObject<MouseEvent>) => {
-                // בדיקה אם הקליק היה מחוץ ללוגו
-                const clickedOnEmpty = e.target === e.target.getStage();
-                if (clickedOnEmpty) {
-                  trRef.current?.nodes([]);
-                } else {
-                  updateTransformer();
-                }
-              }}
-              style={{ maxWidth: '100%', height: 'auto' }}
+              onMouseDown={handleStageMouseDown}
+              onTouchStart={handleStageMouseDown}
+              style={{ maxWidth: '100%', maxHeight: '100%' }}
             >
               <Layer>
                 <KonvaImage
@@ -305,6 +325,46 @@ function LogoEmbedder() {
       </Box>
     </Paper>
   );
+
+  function handleStageMouseDown(e: Konva.KonvaEventObject<MouseEvent | TouchEvent>) {
+    // בדיקה אם הקליק היה מחוץ ללוגו
+    const clickedOnEmpty = e.target === e.target.getStage();
+    if (clickedOnEmpty) {
+      trRef.current?.nodes([]);
+    } else {
+      updateTransformer();
+    }
+
+    // הוספת תמיכה במחוות מגע
+    if (isMobile && e.evt instanceof TouchEvent) {
+      const touch1 = e.evt.touches[0];
+      const touch2 = e.evt.touches[1];
+
+      if (touch1 && touch2) {
+        const stage = stageRef.current;
+        if (stage) {
+          stage.stopDrag();
+          const p1 = {
+            x: touch1.clientX,
+            y: touch1.clientY,
+          };
+          const p2 = {
+            x: touch2.clientX,
+            y: touch2.clientY,
+          };
+
+          if (!logoRef.current) return;
+
+          const newScale = getDistance(p1, p2) / getDistance(stage.getPointerPosition() || p1, p2);
+          logoRef.current.scale({ x: newScale, y: newScale });
+        }
+      }
+    }
+  }
+
+  function getDistance(p1: { x: number; y: number }, p2: { x: number; y: number }) {
+    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+  }
 }
 
 export default LogoEmbedder;

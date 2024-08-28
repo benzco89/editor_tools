@@ -5,10 +5,8 @@ import { Octokit } from "@octokit/rest";
 interface Image {
   id: string;
   name: string;
-  title: string;
   program: string;
   url: string;
-  link: string;
 }
 
 const octokit = new Octokit({ auth: process.env.REACT_APP_GITHUB_TOKEN });
@@ -79,14 +77,15 @@ const ImageGallery: React.FC = () => {
   return (
     <Box sx={{ p: 3, direction: 'rtl' }}>
       <Typography variant="h4" gutterBottom align="center">גלריית תמונות לפושים</Typography>
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel id="program-select-label">סנן לפי תוכנית</InputLabel>
+      <FormControl fullWidth sx={{ mb: 2, textAlign: 'right' }}>
+        <InputLabel id="program-select-label" sx={{ right: 14, left: 'auto' }}>סנן לפי תוכנית</InputLabel>
         <Select
           labelId="program-select-label"
           id="program-select"
           value={selectedProgram}
           label="סנן לפי תוכנית"
           onChange={(e) => setSelectedProgram(e.target.value as string)}
+          sx={{ textAlign: 'right' }}
         >
           <MenuItem value="">הכל</MenuItem>
           {programs.map((program) => (
@@ -109,7 +108,7 @@ const ImageGallery: React.FC = () => {
               <CardMedia
                 component="img"
                 image={image.url}
-                alt={image.title}
+                alt={image.name}
                 sx={{
                   aspectRatio: '16/9',
                   objectFit: 'cover',
@@ -117,7 +116,7 @@ const ImageGallery: React.FC = () => {
               />
               <CardContent>
                 <Typography variant="subtitle1" align="center">
-                  {image.name} - {image.title}
+                  {image.name}
                 </Typography>
                 <Typography variant="body2" align="center" color="text.secondary">
                   {image.program}
