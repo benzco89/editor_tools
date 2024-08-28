@@ -9,7 +9,6 @@ interface Image {
   url: string;
 }
 
-const octokit = new Octokit({ auth: process.env.REACT_APP_GITHUB_TOKEN });
 const owner = 'benzco89';
 const repo = 'editor_tools';
 const path = 'gallery_data.json';
@@ -27,12 +26,22 @@ const ImageGallery: React.FC = () => {
   }, []);
 
   const fetchImages = async () => {
+    console.log('Attempting to fetch images...');
+    console.log('REACT_APP_GITHUB_TOKEN exists:', process.env.REACT_APP_GITHUB_TOKEN ? 'Yes' : 'No');
+    
     try {
+      const octokit = new Octokit({ 
+        auth: process.env.REACT_APP_GITHUB_TOKEN,
+        userAgent: 'editor_tools v1.0.0'
+      });
+
       const response = await octokit.repos.getContent({
         owner,
         repo,
         path,
       });
+
+      console.log('API Response:', response);
 
       if ('content' in response.data) {
         const decodedContent = atob(response.data.content);
@@ -42,10 +51,14 @@ const ImageGallery: React.FC = () => {
 
         const uniquePrograms = Array.from(new Set(parsedImages.map(img => img.program)));
         setPrograms(uniquePrograms);
+      } else {
+        console.error('Unexpected response format:', response.data);
+        setSnackbarMessage('תגובה לא צפויה מהשרת');
+        setSnackbarOpen(true);
       }
     } catch (error) {
-      console.error('שגיאה בטעינת התמונות:', error);
-      setSnackbarMessage('שגיאה בטעינת התמונות');
+      console.error('Error fetching images:', error);
+      setSnackbarMessage('שגיאה בטעינת התמונות: ' + (error as Error).message);
       setSnackbarOpen(true);
     }
   };

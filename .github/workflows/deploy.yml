@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master  # עודכן ל-master כי זה שם הענף הראשי שלך
+      - master
 
 jobs:
   build-and-deploy:
@@ -18,7 +18,8 @@ jobs:
         run: |
           npm ci
           npm run build
-        
+          echo "REACT_APP_GITHUB_TOKEN exists: ${{ secrets.REACT_APP_GITHUB_TOKEN != '' }}"
+
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
