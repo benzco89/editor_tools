@@ -2,7 +2,7 @@
   "name": "editor-tools",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://your-username.github.io/editor_tools",
+  "homepage": "https://benzco89.github.io/editor_tools/",
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
