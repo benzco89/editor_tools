@@ -12,26 +12,15 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
 
-      - name: Check GitHub Token 🔑
-        run: |
-          if [ -z "${{ secrets.REACT_APP_GITHUB_TOKEN }}" ]; then
-            echo "REACT_APP_GITHUB_TOKEN is not set"
-            exit 1
-          else
-            echo "REACT_APP_GITHUB_TOKEN is set"
-          fi
-
       - name: Install and Build 🔧
-        env:
-          REACT_APP_GITHUB_TOKEN: ${{ secrets.REACT_APP_GITHUB_TOKEN }}
-          CI: false
         run: |
           npm ci
           npm run build
-          echo "REACT_APP_GITHUB_TOKEN is set and its length is: ${#REACT_APP_GITHUB_TOKEN}"
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           branch: gh-pages
           folder: build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

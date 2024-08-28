@@ -9,7 +9,7 @@ import { logoFiles, Logo } from '../utils/logoFiles';
 
 declare const process: { env: { PUBLIC_URL: string } };
 
-const MAX_DISPLAY_SIZE = 1000; // גודל מקסימלי לתצוגה
+const MAX_DISPLAY_SIZE = 1000;
 
 function LogoEmbedder() {
   const [selectedFile, setSelectedFile] = useState<HTMLImageElement | null>(null);
@@ -28,32 +28,41 @@ function LogoEmbedder() {
   const isMobile = useMediaQuery('(max-width:600px)');
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const updateStageSize = () => {
+    if (containerRef.current && selectedFile) {
+      const containerWidth = containerRef.current.offsetWidth;
+      const containerHeight = window.innerHeight * 0.5;
+
+      const imageAspectRatio = selectedFile.width / selectedFile.height;
+      let newWidth, newHeight;
+
+      if (containerWidth / containerHeight > imageAspectRatio) {
+        newHeight = containerHeight;
+        newWidth = newHeight * imageAspectRatio;
+      } else {
+        newWidth = containerWidth;
+        newHeight = newWidth / imageAspectRatio;
+      }
+
+      setStageSize({ width: newWidth, height: newHeight });
+    }
+  };
+
   useEffect(() => {
-    const updateStageSize = () => {
-      if (containerRef.current && selectedFile) {
-        const containerWidth = containerRef.current.offsetWidth;
-        const containerHeight = window.innerHeight * 0.5; // שימוש ב-50% מגובה המסך
+    if (selectedFile) {
+      updateStageSize();
+    }
+  }, [selectedFile]);
 
-        const imageAspectRatio = selectedFile.width / selectedFile.height;
-        let newWidth, newHeight;
-
-        if (containerWidth / containerHeight > imageAspectRatio) {
-          // התאמה לגובה
-          newHeight = containerHeight;
-          newWidth = newHeight * imageAspectRatio;
-        } else {
-          // התאמה לרוחב
-          newWidth = containerWidth;
-          newHeight = newWidth / imageAspectRatio;
-        }
-
-        setStageSize({ width: newWidth, height: newHeight });
+  useEffect(() => {
+    const handleResize = () => {
+      if (selectedFile) {
+        updateStageSize();
       }
     };
 
-    updateStageSize();
-    window.addEventListener('resize', updateStageSize);
-    return () => window.removeEventListener('resize', updateStageSize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [selectedFile]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,20 +74,8 @@ function LogoEmbedder() {
         img.onload = () => {
           const { width, height } = img;
           setOriginalImageSize({ width, height });
-          
-          let newWidth = width;
-          let newHeight = height;
-          if (width > MAX_DISPLAY_SIZE || height > MAX_DISPLAY_SIZE) {
-            if (width > height) {
-              newWidth = MAX_DISPLAY_SIZE;
-              newHeight = (height / width) * MAX_DISPLAY_SIZE;
-            } else {
-              newHeight = MAX_DISPLAY_SIZE;
-              newWidth = (width / height) * MAX_DISPLAY_SIZE;
-            }
-          }
-          setStageSize({ width: newWidth, height: newHeight });
           setSelectedFile(img);
+          updateStageSize(); // Call updateStageSize here
         };
         img.src = e.target?.result as string;
       };
@@ -166,7 +163,7 @@ function LogoEmbedder() {
     if (selectedFile && selectedLogo) {
       const logoImg = new Image();
       logoImg.onload = () => {
-        const scale = stageSize.width * 0.8 / logoImg.width; // שינוי ל-80% מרוחב התמונה
+        const scale = stageSize.width * 0.8 / logoImg.width;
         setLogoScale(scale);
         setLogoPosition({
           x: stageSize.width / 2,
@@ -291,16 +288,17 @@ function LogoEmbedder() {
             </>
           )}
         </Box>
-        {selectedFile && selectedLogo && (
+        {selectedFile && (
           <Box 
             ref={containerRef} 
             sx={{ 
               width: '100%', 
-              height: '50vh', // הגדרת גובה קבוע
+              height: '50vh',
               overflow: 'hidden',
               display: 'flex',
               justifyContent: 'center',
-              alignItems: 'center'
+              alignItems: 'center',
+              border: '1px solid #ddd',
             }}
           >
             <Stage 
@@ -317,7 +315,7 @@ function LogoEmbedder() {
                   width={stageSize.width}
                   height={stageSize.height}
                 />
-                <LogoImage />
+                {selectedLogo && <LogoImage />}
               </Layer>
             </Stage>
           </Box>
