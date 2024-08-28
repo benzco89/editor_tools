@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import LogoEmbedder from './pages/LogoEmbedder';
 import PdfEmbedder from './pages/PdfEmbedder';
@@ -12,7 +12,7 @@ function App() {
       <div className="App">
         <header className="bg-white shadow-md p-4">
           <Link to="/" className="flex items-center">
-            <img src={`${process.env.PUBLIC_URL}/kan-news-logo.jpg`} alt="כאן חדשות" className="h-10 mr-2" />
+            <img src="/editor_tools/kan-news-logo.jpg" alt="כאן חדשות" className="h-10 mr-2" />
             <span className="text-xl font-bold text-primary">כלי עזר</span>
           </Link>
         </header>
