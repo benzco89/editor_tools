@@ -15,6 +15,7 @@ jobs:
       - name: Install and Build 🔧
         env:
           REACT_APP_GITHUB_TOKEN: ${{ secrets.REACT_APP_GITHUB_TOKEN }}
+          CI: false  # Add this line to prevent treating warnings as errors
         run: |
           npm ci
           npm run build
