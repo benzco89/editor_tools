@@ -1,14 +1,16 @@
 import React from 'react';
-import { HashRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import LogoEmbedder from './pages/LogoEmbedder';
 import PdfEmbedder from './pages/PdfEmbedder';
 import FileConverter from './pages/FileConverter';
 import ImageCompression from './pages/ImageCompression';
+import ImageGallery from './pages/ImageGallery';
+import GalleryManager from './pages/GalleryManager';
 
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter basename="/editor_tools">
       <div className="App">
         <header className="bg-white shadow-md p-4">
           <Link to="/" className="flex items-center">
@@ -22,9 +24,11 @@ function App() {
           <Route path="/pdf-embedder" element={<PdfEmbedder />} />
           <Route path="/file-converter" element={<FileConverter />} />
           <Route path="/image-compression" element={<ImageCompression />} />
+          <Route path="/image-gallery" element={<ImageGallery />} />
+          <Route path="/gallery-manager" element={<GalleryManager />} />
         </Routes>
       </div>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 
