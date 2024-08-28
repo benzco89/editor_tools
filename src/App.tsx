@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import LogoEmbedder from './pages/LogoEmbedder';
 import PdfEmbedder from './pages/PdfEmbedder';
@@ -8,11 +8,11 @@ import ImageCompression from './pages/ImageCompression';
 
 function App() {
   return (
-    <Router basename="/editor_tools">
+    <HashRouter>
       <div className="App">
         <header className="bg-white shadow-md p-4">
           <Link to="/" className="flex items-center">
-            <img src="/editor_tools/kan-news-logo.jpg" alt="כאן חדשות" className="h-10 mr-2" />
+            <img src="./kan-news-logo.jpg" alt="כאן חדשות" className="h-10 mr-2" />
             <span className="text-xl font-bold text-primary">כלי עזר</span>
           </Link>
         </header>
@@ -24,8 +24,9 @@ function App() {
           <Route path="/image-compression" element={<ImageCompression />} />
         </Routes>
       </div>
-    </Router>
+    </HashRouter>
   );
 }
 
 export default App;
+
