@@ -25,6 +25,19 @@ function LogoEmbedder() {
   const logoRef = useRef<Konva.Image>(null);
   const trRef = useRef<Konva.Transformer>(null);
 
+  // Add new state for controlling responsive layout
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Add useEffect to check screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
@@ -200,89 +213,96 @@ function LogoEmbedder() {
     );
   };
 
+  // Modify the return statement to improve mobile layout
   return (
-    <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
+    <Paper elevation={3} sx={{ p: 2, mt: 2 }}>
       <Typography variant="h5" gutterBottom>
         הטמעת לוגו
       </Typography>
-      <input
-        accept="image/*"
-        style={{ display: 'none' }}
-        id="raised-button-file"
-        type="file"
-        onChange={handleFileChange}
-      />
-      <label htmlFor="raised-button-file">
-        <Button variant="contained" component="span">
-          בחר תמונה
-        </Button>
-      </label>
-      {selectedFile && (
-        <FormControl fullWidth sx={{ mt: 2 }}>
-          <InputLabel id="logo-select-label">בחר לוגו</InputLabel>
-          <Select
-            labelId="logo-select-label"
-            value={selectedLogo}
-            label="בחר לוגו"
-            onChange={handleLogoChange}
-          >
-            {logos.map((logo) => (
-              <MenuItem key={logo.filename} value={logo.filename}>{logo.displayName}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      )}
-      {selectedFile && selectedLogo && (
-        <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-          <Stage 
-            width={stageSize.width} 
-            height={stageSize.height} 
-            ref={stageRef}
-            onMouseDown={(e: Konva.KonvaEventObject<MouseEvent>) => {
-              // בדיקה אם הקליק היה מחוץ ללוגו
-              const clickedOnEmpty = e.target === e.target.getStage();
-              if (clickedOnEmpty) {
-                trRef.current?.nodes([]);
-              } else {
-                updateTransformer();
-              }
-            }}
-          >
-            <Layer>
-              <KonvaImage
-                image={selectedFile}
-                width={stageSize.width}
-                height={stageSize.height}
-              />
-              <LogoImage />
-            </Layer>
-          </Stage>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ width: '100%' }}>
+          <input
+            accept="image/*"
+            style={{ display: 'none' }}
+            id="raised-button-file"
+            type="file"
+            onChange={handleFileChange}
+          />
+          <label htmlFor="raised-button-file">
+            <Button variant="contained" component="span" fullWidth>
+              בחר תמונה
+            </Button>
+          </label>
+          {selectedFile && (
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel id="logo-select-label">בחר לוגו</InputLabel>
+              <Select
+                labelId="logo-select-label"
+                value={selectedLogo}
+                label="בחר לוגו"
+                onChange={handleLogoChange}
+              >
+                {logos.map((logo) => (
+                  <MenuItem key={logo.filename} value={logo.filename}>{logo.displayName}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          {selectedFile && selectedLogo && (
+            <>
+              <Box sx={{ mt: 2 }}>
+                <Typography gutterBottom>איכות הייצוא</Typography>
+                <Slider
+                  value={exportQuality}
+                  onChange={(event: Event, newValue: number | number[]) => setExportQuality(newValue as number)}
+                  min={0.1}
+                  max={1}
+                  step={0.1}
+                  marks
+                  valueLabelDisplay="auto"
+                  valueLabelFormat={(value) => `${Math.round(value * 100)}%`}
+                />
+              </Box>
+              <Button 
+                variant="contained" 
+                onClick={handleExport} 
+                sx={{ mt: 2 }}
+                fullWidth
+              >
+                ייצא תמונה
+              </Button>
+            </>
+          )}
         </Box>
-      )}
-      {selectedFile && selectedLogo && (
-        <>
-          <Box sx={{ mt: 2 }}>
-            <Typography gutterBottom>איכות הייצוא</Typography>
-            <Slider
-              value={exportQuality}
-              onChange={(event: Event, newValue: number | number[]) => setExportQuality(newValue as number)}
-              min={0.1}
-              max={1}
-              step={0.1}
-              marks
-              valueLabelDisplay="auto"
-              valueLabelFormat={(value) => `${Math.round(value * 100)}%`}
-            />
+        {selectedFile && selectedLogo && (
+          <Box sx={{ width: '100%', overflow: 'auto' }}>
+            <Stage 
+              width={stageSize.width} 
+              height={stageSize.height} 
+              ref={stageRef}
+              onMouseDown={(e: Konva.KonvaEventObject<MouseEvent>) => {
+                // בדיקה אם הקליק היה מחוץ ללוגו
+                const clickedOnEmpty = e.target === e.target.getStage();
+                if (clickedOnEmpty) {
+                  trRef.current?.nodes([]);
+                } else {
+                  updateTransformer();
+                }
+              }}
+              style={{ maxWidth: '100%', height: 'auto' }}
+            >
+              <Layer>
+                <KonvaImage
+                  image={selectedFile}
+                  width={stageSize.width}
+                  height={stageSize.height}
+                />
+                <LogoImage />
+              </Layer>
+            </Stage>
           </Box>
-          <Button 
-            variant="contained" 
-            onClick={handleExport} 
-            sx={{ mt: 2 }}
-          >
-            ייצא תמונה
-          </Button>
-        </>
-      )}
+        )}
+      </Box>
     </Paper>
   );
 }
