@@ -1,0 +1,24 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master  # או main, תלוי באיך קוראים לענף הראשי שלך
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+
+      - name: Install and Build 🔧
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages  # הענף אליו יתבצע הדפלוי
+          folder: build  # התיקייה שמכילה את הקבצים לדפלוי (תלוי בהגדרות הבילד שלך)
