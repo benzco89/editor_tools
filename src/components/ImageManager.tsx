@@ -27,7 +27,7 @@ const ImageManager: React.FC<ImageManagerProps> = ({ token }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const octokit = useMemo(() => new Octokit({ auth: process.env.REACT_APP_GITHUB_TOKEN }), []);
+  const octokit = useMemo(() => new Octokit({ auth: token }), [token]);
   const owner = 'benzco89';
   const repo = 'editor_tools';
   const path = 'gallery_data.json';
@@ -46,8 +46,8 @@ const ImageManager: React.FC<ImageManagerProps> = ({ token }) => {
       } else {
         console.error('Unexpected response format');
       }
-    } catch (error) {
-      if ((error as any).status === 404) {
+    } catch (error: any) {
+      if (error.status === 404) {
         console.warn('File not found, creating new file with empty array');
         await updateGalleryData([]);
         setImages([]);
@@ -115,18 +115,33 @@ const ImageManager: React.FC<ImageManagerProps> = ({ token }) => {
 
   const updateGalleryData = useCallback(async (updatedImages: Image[]) => {
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(updatedImages, null, 2))));
-    const currentFile = await octokit.repos.getContent({ owner, repo, path });
-    if ('sha' in currentFile.data) {
-      await octokit.repos.createOrUpdateFileContents({
-        owner,
-        repo,
-        path,
-        message: 'Update gallery data',
-        content,
-        sha: currentFile.data.sha,
-      });
-    } else {
-      console.error('Unexpected response format');
+    try {
+      const currentFile = await octokit.repos.getContent({ owner, repo, path });
+      if ('sha' in currentFile.data) {
+        await octokit.repos.createOrUpdateFileContents({
+          owner,
+          repo,
+          path,
+          message: 'Update gallery data',
+          content,
+          sha: currentFile.data.sha,
+        });
+      } else {
+        console.error('Unexpected response format');
+      }
+    } catch (error: any) {
+      if (error.status === 404) {
+        // File doesn't exist, create it
+        await octokit.repos.createOrUpdateFileContents({
+          owner,
+          repo,
+          path,
+          message: 'Create gallery data',
+          content,
+        });
+      } else {
+        throw error;
+      }
     }
   }, [octokit, owner, repo, path]);
 
