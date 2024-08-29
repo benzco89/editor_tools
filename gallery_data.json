@@ -8,14 +8,6 @@
     "link": "https://www.kan.org.il/program/?catId=1039"
   },
   {
-    "id": "2",
-    "name": "אילאיל שחר",
-    "title": "הבוקר הזה",
-    "program": "הבוקר הזה",
-    "url": "https://kan.org.il/media/3kve4x5a/imgid-85133_z.jpeg",
-    "link": "https://www.kan.org.il/program/?catId=1039"
-  },
-  {
     "id": "1724866145355",
     "name": "שאול אמסטרדמסקי",
     "program": "הבוקר הזה",
@@ -26,6 +18,14 @@
     "name": "מאיה ראכלין",
     "program": "הבוקר הזה",
     "url": "https://www.kan.org.il/media/tfjh5wqs/whatsapp-image-2024-08-20-at-063600-1.jpeg"
+  },
+  {
+    "id": "2",
+    "name": "אילאיל שחר",
+    "title": "הבוקר הזה",
+    "program": "הבוקר הזה",
+    "url": "https://kan.org.il/media/3kve4x5a/imgid-85133_z.jpeg",
+    "link": "https://www.kan.org.il/program/?catId=1039"
   },
   {
     "id": "3",
