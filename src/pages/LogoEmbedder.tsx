@@ -9,7 +9,7 @@ import { logoFiles, Logo } from '../utils/logoFiles';
 
 declare const process: { env: { PUBLIC_URL: string } };
 
-const MAX_DISPLAY_SIZE = 1000;
+const MAX_DISPLAY_SIZE = 800;
 
 function LogoEmbedder() {
   const [selectedFile, setSelectedFile] = useState<HTMLImageElement | null>(null);

@@ -27,14 +27,14 @@ const ImageManager: React.FC<ImageManagerProps> = ({ token }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const octokit = new Octokit({ auth: token });
+  const octokit = new Octokit({ auth: process.env.REACT_APP_GITHUB_TOKEN });
   const owner = 'benzco89';
   const repo = 'editor_tools';
   const path = 'gallery_data.json';
 
   useEffect(() => {
     fetchImages();
-  }, [token]);
+  }, []);
 
   const fetchImages = async () => {
     setIsLoading(true);
