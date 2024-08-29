@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { TextField, Button, Box, Typography, List, ListItem, ListItemText, IconButton, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -27,16 +27,16 @@ const ImageManager: React.FC<ImageManagerProps> = ({ token }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const octokit = new Octokit({ auth: process.env.REACT_APP_GITHUB_TOKEN });
+  const octokit = useMemo(() => new Octokit({ auth: process.env.REACT_APP_GITHUB_TOKEN }), []);
   const owner = 'benzco89';
   const repo = 'editor_tools';
   const path = 'gallery_data.json';
 
   useEffect(() => {
     fetchImages();
-  }, []);
+  }, [fetchImages]);
 
-  const fetchImages = async () => {
+  const fetchImages = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await octokit.repos.getContent({
@@ -63,7 +63,7 @@ const ImageManager: React.FC<ImageManagerProps> = ({ token }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [octokit, owner, repo, path]);
 
   const handleAddImage = () => {
     setImages([...images, { ...newImage, id: Date.now().toString() }]);

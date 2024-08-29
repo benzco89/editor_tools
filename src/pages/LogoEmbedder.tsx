@@ -1,6 +1,6 @@
 /// <reference types="react" />
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Button, Typography, Paper, Select, MenuItem, FormControl, InputLabel, Box, Slider, useMediaQuery } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Konva from 'konva';
