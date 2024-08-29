@@ -32,10 +32,6 @@ const ImageManager: React.FC<ImageManagerProps> = ({ token }) => {
   const repo = 'editor_tools';
   const path = 'gallery_data.json';
 
-  useEffect(() => {
-    fetchImages();
-  }, [fetchImages]);
-
   const fetchImages = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -64,6 +60,10 @@ const ImageManager: React.FC<ImageManagerProps> = ({ token }) => {
       setIsLoading(false);
     }
   }, [octokit, owner, repo, path]);
+
+  useEffect(() => {
+    fetchImages();
+  }, [fetchImages]);
 
   const handleAddImage = () => {
     setImages([...images, { ...newImage, id: Date.now().toString() }]);
