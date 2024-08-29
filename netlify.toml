@@ -2,6 +2,7 @@
   base = "."
   command = "npm run build"
   publish = "build"
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF gallery_data.json"
 
 [[redirects]]
   from = "/*"
